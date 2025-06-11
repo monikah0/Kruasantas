@@ -11,44 +11,44 @@ import java.awt.Color;
  * it awards points (and possibly an extra life), then “disappears.”
  */
 public class Croissant extends Entity {
-    private final int points;
-    private final boolean extraLife;
-    private boolean collected;
+    public enum Type{
+        SCORE, EXTRA_LIFE
+    }
 
-    public Croissant(int x, int y, int width, int height, int points, boolean extraLife) {
+    private Type type;
+    private boolean collected = false;
+
+    public Croissant(int x, int y, int width, int height, Type type) {
         super(x, y, width, height);
-        this.points    = points;
-        this.extraLife = extraLife;
-        this.collected = false;
+        this.type = type;
+    }
+    public Croissant(int x, int y, boolean isLifeBoost) {
+        this(x, y, 24, 24, isLifeBoost ? Type.EXTRA_LIFE : Type.SCORE);
     }
 
-    @Override
-    public void update() {
-    }
 
-    @Override
-    public void draw(Graphics g) {
-        if (collected) {
-            return;
-        }
-        g.setColor(Color.ORANGE);
-        g.fillOval(x, y, width, height);
-        g.setColor(Color.DARK_GRAY);
-        g.drawOval(x, y, width, height);
-    }
 
-    public void onPickup(Player player) {
-        if (collected) {
-            return;
-        }
-        collected = true;
-        player.addScore(points);
-        if (extraLife) {
-            player.addExtraLife();
-        }
+    public Type getType() {
+        return type;
     }
-
+    public boolean isLifeBoost() {
+        return type == Type.EXTRA_LIFE;
+    }
     public boolean isCollected() {
         return collected;
+    }
+    public void collect() {
+        collected = true;
+    }
+
+    public void update() {
+        // Croissants don't move, so no update logic needed
+    }
+
+    public void render(Graphics g) {
+        if (!collected) {
+            g.setColor(type == Type.SCORE ? Color.BLUE : Color.PINK);
+            g.fillOval(x, y, width, height);
+        }
     }
 }

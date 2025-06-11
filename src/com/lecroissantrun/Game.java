@@ -1,180 +1,174 @@
 package com.lecroissantrun;
 
-public class Game {
-}
-package com.lecroissantrun;
-
-import javax.swing.JFrame;
-import java.awt.Canvas;
-import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.image.BufferStrategy;
-import java.awt.event.KeyListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.RenderingHints.Key;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+//Jore
+//Game.java
 /**
- * Jore
- * Game.java
- *
- * The “boss” of the game: opens the window, runs the main loop, and
- * checks for win/lose.  It also picks up keyboard input to drive the Player.
+ * The main game class that initializes the game window, handles input,
+ * and manages the game loop.
  */
-public class Game extends Canvas implements Runnable, KeyListener {
-    private Thread gameThread;
-    private boolean running = false;
-    private Level level;
-    private Player player;
-    private int currentLevel;
-    private boolean upPressed, downPressed, leftPressed, rightPressed;
-
-    public Game() {
-        JFrame frame = new JFrame("Le Croissant Run");
-        frame.setSize(800, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.add(this);
-        frame.setVisible(true);
-        this.addKeyListener(this);
-        this.setFocusable(true);
-        currentLevel = 1;
-        initLevel();
-        start();
-    }
-
-    private void initLevel() {
-        player = new Player(50, 50, 32, 32);
-        level = new Level(currentLevel);
-        level.setPlayer(player);
-    }
-
-    public synchronized void start() {
-        if (running) return;
-        running = true;
-        gameThread = new Thread(this);
-        gameThread.start();
-    }
-
-    public synchronized void stop() {
-        if (!running) return;
-        running = false;
-        try {
-            gameThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void run() {
-        long lastTime = System.nanoTime();
-        final double nsPerFrame = 1_000_000_000.0 / 60.0;
-        double delta = 0;
-        while (running) {
-            long now = System.nanoTime();
-            delta += (now - lastTime) / nsPerFrame;
-            lastTime = now;
-            while (delta >= 1) {
-                update();
-                delta--;
-            }
-            render();
-        }
-        stop();
-    }
-
-    private void update() {
-        player.setDx(0);
-        player.setDy(0);
-        int speed = 4;
-        if (upPressed)    player.setDy(-speed);
-        if (downPressed)  player.setDy(speed);
-        if (leftPressed)  player.setDx(-speed);
-        if (rightPressed) player.setDx(speed);
-
-        level.updateAll();
-
-        if (player.getLives() <= 0) {
-            System.out.println("Game Over! You ran out of lives.");
-            running = false;
-        }
-
-        if (level.isFinished()) {
-            if (currentLevel < 5) {
-                currentLevel++;
-                initLevel();
-            } else {
-                System.out.println("Congratulations! You completed all levels.");
-                running = false;
-            }
-        }
-    }
-
-    private void render() {
-        BufferStrategy bs = this.getBufferStrategy();
-        if (bs == null) {
-            this.createBufferStrategy(3);
-            return;
-        }
-        Graphics g = bs.getDrawGraphics();
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
-        level.renderAll(g);
-        g.dispose();
-        bs.show();
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int code = e.getKeyCode();
-        switch (code) {
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
-                upPressed = true;
-                break;
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
-                downPressed = true;
-                break;
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
-                leftPressed = true;
-                break;
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
-                rightPressed = true;
-                break;
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int code = e.getKeyCode();
-        switch (code) {
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
-                upPressed = false;
-                break;
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
-                downPressed = false;
-                break;
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
-                leftPressed = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
-                rightPressed = false;
-                break;
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
+public class Game {
 
     public static void main(String[] args) {
-        new Game();
+        JFrame frame = new JFrame("Le Croissant Run");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+
+        GamePanel panel = new GamePanel();
+        frame.add(panel);
+        frame.setVisible(true);
+        panel.requestFocusInWindow();
+
+    }
+
+    static class GamePanel extends JPanel implements Runnable{
+        Player player;
+        Level level;
+        boolean[] keys = new boolean[4]; 
+
+
+        private Thread gameThread;
+        private boolean running;
+
+        public GamePanel(){
+            player = new Player(60,420);
+            level = new Level();
+
+            setFocusable(true);
+            requestFocusInWindow(); // Ensure the panel can receive key events
+
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    // Handle key presses for player movement
+                    switch (e.getKeyCode()) {
+                    
+                    case KeyEvent.VK_A:
+                        keys[2] = true;
+                        break;
+                    case KeyEvent.VK_D:
+                        keys[3] = true;
+                        break;
+                    
+                }
+                    if (e.getKeyCode() == KeyEvent.VK_W) {
+                        attackEnemies(); // Attack enemies when w is pressed
+                    }
+
+
+                }
+
+                public void keyReleased(KeyEvent e) {
+                    // Handle key releases for player movement
+                    switch (e.getKeyCode()) {
+                    case KeyEvent.VK_W:
+                        keys[0] = false;
+                        break;
+                    case KeyEvent.VK_S:
+                        keys[1] = false;
+                        break;
+                    case KeyEvent.VK_A:
+                        keys[2] = false;
+                        break;
+                    case KeyEvent.VK_D:
+                        keys[3] = false;
+                        break;
+                }
+
+                }
+
+                private void attackEnemies(){
+                    Rectangle attackRange = new Rectangle(player.x - 10, player.y - 50, player.width + 20, player.height + 50);
+                    for (Enemy e : level.getEnemies()){
+                        if(!e.isDead() && e.getBounds().intersects(attackRange)){
+                            e.takeDamage();
+                            break;
+                        }    
+                       player.attack();
+                    }
+                }
+            });
+            running = true;
+            gameThread = new Thread(this);
+            gameThread.start();
+        }
+
+        public void run(){
+            long lastTime = System.nanoTime();
+            double amountofTicks = 60.0;
+            double ns = 1000000000 / amountofTicks;
+            double delta = 0;
+            while (running) {
+                long now = System.nanoTime();
+                delta += (now - lastTime) / ns;
+                lastTime = now;
+
+                while (delta >= 1) {
+                    updateGame();
+                    repaint(); 
+                    delta--;
+                }
+                
+                try {
+                    Thread.sleep(2); // Sleep to limit frame rate
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        public void updateGame(){
+            player.move(keys);
+            level.update(player);
+            Rectangle goal = new Rectangle(700, 430, 60, 60);
+
+            if (player.getBounds().intersects(goal)) {
+                System.out.println("You reached the boulangerie!");
+                running = false; // stop game loop
+                JOptionPane.showMessageDialog(this, "Victory! You reached the boulangerie!");
+                System.exit(0); // exit game (optional)
+            }
+            
+
+        }
+
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            
+            //sky
+            g.setColor(new Color(135, 206, 235)); // Sky blue
+            g.fillRect(0, 0, getWidth(), getHeight()); // Fill background
+
+            //grass
+            g.setColor(new Color(34, 139, 34)); // Forest green
+            g.fillRect(0, getHeight() - 100, getWidth(), 100); // Fill grass area
+
+            // Starting area
+            g.setColor(new Color(173, 216, 230)); // light blue
+            g.fillRect(40, 410, 40, 40);
+            g.setColor(Color.BLACK);
+            g.drawString("Start", 45, 355);
+
+            // Draw boulangerie goal
+            g.setColor(new Color(255, 204, 102)); // croissant-colored!
+            g.fillRect(700,410 , 60, 60); // goal area
+
+            g.setColor(Color.BLACK);
+            g.drawString("Boulangerie", 705, 355);
+
+
+            level.render(g);
+            player.render(g);
+
+            g.setColor(Color.BLACK);
+            g.drawString("Score: " + player.getScore(), 10, 20);
+            g.drawString("Lives: " + player.getLives(), 10, 40);
+        }
     }
 }

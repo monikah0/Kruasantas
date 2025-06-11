@@ -11,19 +11,17 @@ import java.awt.Color;
  * is drawn each frame, and blocks the player from passing through.
  */
 public class Obstacle extends Entity {
-    public Obstacle(int x, int y, int width, int height) {
-        super(x, y, width, height);
+    public Obstacle(int x, int y) {
+        super(x, y, 32, 32);
     }
 
     @Override
     public void update() {
     }
 
-    @Override
-    public void draw(Graphics g) {
-        g.setColor(Color.GRAY);
-        g.fillRect(x, y, width, height);
-        g.setColor(Color.DARK_GRAY);
-        g.drawRect(x, y, width, height);
-    }
+   @Override
+   public void render(Graphics g){
+    g.setColor(Color.DARK_GRAY);
+    g.fillRect(x, y, width, height);
+   }
 }
