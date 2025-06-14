@@ -3,6 +3,7 @@ package com.lecroissantrun;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+<<<<<<< HEAD
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.io.File;
@@ -13,6 +14,9 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.swing.ImageIcon;
+=======
+import java.awt.Rectangle;
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
 
 public class Player extends Entity {
     private int score = 0;
@@ -22,6 +26,7 @@ public class Player extends Entity {
     private boolean attacking = false;
     private long lastAttackTime = 0;
     private final long ATTACK_COOLDOWN = 500;
+<<<<<<< HEAD
     private double velocityY = 0;
     private boolean isJumping = false;
     private final double gravity = 0.5;
@@ -58,6 +63,16 @@ public class Player extends Entity {
 }
 
     public void move(boolean[] keys, ArrayList<Obstacle> obstacles, int levelWidth) {
+=======
+    private final int GAME_WIDTH = 800;
+
+    public Player(int x, int y) {
+        super(x, y, 32, 32);
+        speed = 3; // Reasonable movement speed
+    }
+
+    public void move(boolean[] keys) {
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         int oldX = x;
         
         // Horizontal movement
@@ -67,6 +82,7 @@ public class Player extends Entity {
         if (keys[3] && !keys[2]) { // D key (right)
             x += speed;
         }
+<<<<<<< HEAD
 
         velocityY += gravity;
         y += velocityY;
@@ -89,16 +105,27 @@ public class Player extends Entity {
             velocityY = 0;
             isJumping = false;
         }
+=======
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         
         // Boundary checking
         if (x < 0) {
             x = 0;
         }
+<<<<<<< HEAD
         if (x > levelWidth - width) {
             x = levelWidth - width;
         }
         
         
+=======
+        if (x > GAME_WIDTH - width) {
+            x = GAME_WIDTH - width;
+        }
+        
+        // Keep player on ground level
+        y = 430;
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
     }
 
     public void collectCroissant(Croissant c) {
@@ -118,6 +145,7 @@ public class Player extends Entity {
     }
 
     @Override
+<<<<<<< HEAD
     public void render(Graphics g, int cameraX, int cameraY) {
         Graphics2D g2d = (Graphics2D) g;
         
@@ -144,6 +172,28 @@ public class Player extends Entity {
         }
 
 
+=======
+    public void render(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        
+        // Player body
+        if (attacking) {
+            g.setColor(Color.YELLOW); // Flash yellow when attacking
+        } else {
+            g.setColor(Color.WHITE);
+        }
+        g.fillRect(x, y, width, height);
+        
+        // Player outline
+        g.setColor(Color.BLACK);
+        g.drawRect(x, y, width, height);
+        
+        // Simple face
+        g.setColor(Color.BLACK);
+        g.fillOval(x + 8, y + 8, 4, 4);   // Left eye
+        g.fillOval(x + 20, y + 8, 4, 4);  // Right eye
+        g.fillOval(x + 14, y + 20, 4, 2); // Mouth
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         
         // Health bar
         int healthBarWidth = 32;
@@ -152,16 +202,28 @@ public class Player extends Entity {
         
         // Health bar background
         g.setColor(Color.RED);
+<<<<<<< HEAD
         g.fillRect(x - cameraX, healthBarY - cameraY, healthBarWidth, healthBarHeight);
+=======
+        g.fillRect(x, healthBarY, healthBarWidth, healthBarHeight);
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         
         // Health bar foreground
         g.setColor(Color.GREEN);
         int currentHealthWidth = (int)(healthBarWidth * ((double)currentHealth / maxHealth));
+<<<<<<< HEAD
         g.fillRect(x - cameraX, healthBarY - cameraY, currentHealthWidth, healthBarHeight);
         
         // Health bar border
         g.setColor(Color.BLACK);
         g.drawRect(x - cameraX, healthBarY - cameraY, healthBarWidth, healthBarHeight);
+=======
+        g.fillRect(x, healthBarY, currentHealthWidth, healthBarHeight);
+        
+        // Health bar border
+        g.setColor(Color.BLACK);
+        g.drawRect(x, healthBarY, healthBarWidth, healthBarHeight);
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
     }
 
     public Rectangle getBounds() {
@@ -216,8 +278,11 @@ public class Player extends Entity {
         if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
             attacking = true;
             lastAttackTime = currentTime;
+<<<<<<< HEAD
             swingStart = currentTime;
             playSound();
+=======
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         }
     }
 
@@ -228,6 +293,7 @@ public class Player extends Entity {
     public void addScore(int points) {
         score += points;
     }
+<<<<<<< HEAD
 
     public void jump() {
         if (!isJumping){
@@ -251,4 +317,6 @@ public void addLife() {
 }
 
 
+=======
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
 }

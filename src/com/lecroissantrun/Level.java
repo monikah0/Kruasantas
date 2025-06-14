@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 
+=======
+// Level.java - Fixed version
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
 package com.lecroissantrun;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;  // Added missing import
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -21,6 +26,7 @@ public class Level {
     }
 
     private void loadLevelData() {
+<<<<<<< HEAD
     Random rand = new Random();
 
     // Generate random barrel stairs with life croissants
@@ -61,6 +67,31 @@ public class Level {
         int croissantX = baseX + (stairHeight - 1) * (barrelSize / 2);
         int croissantY = 430 - stairHeight * barrelSize - 24;
         croissants.add(new Croissant(croissantX, croissantY, true));
+=======
+        // Add some obstacles (but not blocking the path completely)
+        obstacles.add(new Obstacle(150, 398)); // Small platform
+        obstacles.add(new Obstacle(300, 398));
+        obstacles.add(new Obstacle(450, 398));
+        obstacles.add(new Obstacle(600, 398));
+
+        // Add enemies at strategic positions
+        enemies.add(new Enemy(120, 430));
+        enemies.add(new Enemy(250, 430));
+        enemies.add(new Enemy(380, 430));
+        enemies.add(new Enemy(520, 430));
+        enemies.add(new Enemy(650, 430));
+
+        // Add score croissants
+        croissants.add(new Croissant(100, 400, false));  // Score croissant
+        croissants.add(new Croissant(200, 400, false));
+        croissants.add(new Croissant(350, 400, false));
+        croissants.add(new Croissant(500, 400, false));
+        croissants.add(new Croissant(620, 400, false));
+
+        // Add life boost croissants (fewer and more valuable)
+        croissants.add(new Croissant(280, 380, true));   // Life boost (higher up)
+        croissants.add(new Croissant(480, 380, true));   // Life boost (higher up)
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
     }
 
     // Enemies scale with level
@@ -127,23 +158,38 @@ public class Level {
         player.update();
     }
 
+<<<<<<< HEAD
     public void render(Graphics g, int cameraX, int cameraY) {
         // Render obstacles first (background)
         for (Obstacle obstacle : obstacles) {
             obstacle.render(g, cameraX, cameraY);
+=======
+    public void render(Graphics g) {
+        // Render obstacles first (background)
+        for (Obstacle obstacle : obstacles) {
+            obstacle.render(g);
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         }
         
         // Render croissants
         for (Croissant croissant : croissants) {
             if (!croissant.isCollected()) {
+<<<<<<< HEAD
                 croissant.render(g, cameraX, cameraY);
+=======
+                croissant.render(g);
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
             }
         }
         
         // Render enemies last (foreground)
         for (Enemy enemy : enemies) {
             if (!enemy.isDead()) {
+<<<<<<< HEAD
                 enemy.render(g, cameraX, cameraY);
+=======
+                enemy.render(g);
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
             }
         }
     }
@@ -180,6 +226,7 @@ public class Level {
         }
         return count;
     }
+<<<<<<< HEAD
 
     public int getWidth() {
         return levelWidth;
@@ -187,4 +234,6 @@ public class Level {
     public int getHeight(){
         return height;
     }
+=======
+>>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
 }
