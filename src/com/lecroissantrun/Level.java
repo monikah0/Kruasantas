@@ -11,7 +11,7 @@ public class Level {
     private ArrayList<Croissant> croissants = new ArrayList<>();
     private int levelNumber;
     private int levelWidth;
-    private int height = 1200;
+    private int height = 570;
 
     public Level(int levelNumber) {
         this.levelNumber = levelNumber;
