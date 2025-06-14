@@ -33,10 +33,10 @@ public abstract class Entity {
    }
 
   public abstract void update();
-  public abstract void render(java.awt.Graphics g);
+  public abstract void render(java.awt.Graphics g, int cameraX, int cameraY);
 
   public void draw(java.awt.Graphics g) {
-    render(g);
+    render(g, 0,0);
   }
 
     public int getX() {

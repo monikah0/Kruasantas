@@ -1,86 +1,190 @@
-//Monikos
-/*
- Holds a list of all entities(player, croissants, enemies, obstacles)
- Tells each one to update (move, check for collisions)
- Manages adding or removing things (like croissant being eaten)
-*/
+
 package com.lecroissantrun;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 public class Level {
-
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Enemy> enemies = new ArrayList<>();
     private ArrayList<Croissant> croissants = new ArrayList<>();
+    private int levelNumber;
+    private int levelWidth;
+    private int height = 570;
 
-    public Level() {
+    public Level(int levelNumber) {
+        this.levelNumber = levelNumber;
+        this.levelWidth = 800 + (levelNumber - 1) * 400; // Level gets wider
         loadLevelData();
     }
 
     private void loadLevelData() {
-        obstacles.add(new Obstacle(0, 430));
+    Random rand = new Random();
 
-        int[] enemySpawnX = {100, 200, 300, 400, 500}; // evenly spaced
-        for (int x : enemySpawnX) {
-            enemies.add(new Enemy(x, 430));
+    // Generate random barrel stairs with life croissants
+    int numStructures = levelNumber; // More structures per level
+    int stairHeight = 4 + levelNumber;   // Taller stairs per level
+    int barrelSize = 50;
+
+    ArrayList<Integer> usedPositions = new ArrayList<>();
+
+    for (int s = 0; s < numStructures; s++) {
+        int baseX;
+
+        while (true) {
+            baseX = 100 + rand.nextInt(levelWidth - 300);
+            boolean farEnough = true;
+
+            for (int used : usedPositions) {
+                if (Math.abs(baseX - used) < 100) {
+                    farEnough = false;
+                    break;
+                }
+            }
+
+            if (farEnough) {
+                usedPositions.add(baseX);
+                break;
+            }
         }
 
-        int[] scoreCroissantX = {150, 250, 350, 450, 550}; // evenly spaced
-        for (int x : scoreCroissantX) {
-            croissants.add(new Croissant(x, 430, false));
+        // Add stair-shaped barrels
+        for (int i = 0; i < stairHeight; i++) {
+            int x = baseX + i * (barrelSize / 2);
+            int y = 430 - (i + 1) * barrelSize;
+            obstacles.add(new Obstacle(x, y));
         }
 
-        int[] lifeCroissantX = {320, 530}; // life croissants
-        for (int x : lifeCroissantX) {
-            croissants.add(new Croissant(x, 430, true));
-        }
+        // Croissant at the top
+        int croissantX = baseX + (stairHeight - 1) * (barrelSize / 2);
+        int croissantY = 430 - stairHeight * barrelSize - 24;
+        croissants.add(new Croissant(croissantX, croissantY, true));
     }
+
+    // Enemies scale with level
+    // Define boundaries for safe zone and boulangerie zone
+    int safeZoneWidth = 200;
+    int boulangerieZoneWidth = 200;
+
+    // Enemies scale with level
+    int enemyCount = 5 * levelNumber;
+    for (int i = 0; i < enemyCount; i++) {
+        int x;
+        do {
+            x = 100 + rand.nextInt(levelWidth - 200);
+        } while (x < safeZoneWidth); // Skip spawning in safe zone
+        enemies.add(new Enemy(x, 430));
+    }
+
+    // Score croissants scale with level
+    int scoreCroissants = 4 + 2 * (levelNumber - 1);
+    for (int i = 0; i < scoreCroissants; i++) {
+        int x;
+        do {
+            x = 100 + rand.nextInt(levelWidth - 200);
+        } while (x < safeZoneWidth || x > levelWidth - boulangerieZoneWidth); // Avoid start & end
+        croissants.add(new Croissant(x, 400, false));
+    }
+
+}
+
 
     public void update(Player player) {
+        // Update all enemies
+        for (Enemy enemy : enemies) {
+            if (!enemy.isDead()) {
+                enemy.update();
+                enemy.updateWithPlayer(player);
+            }
+        }
+
         // Handle croissant collection
-        Iterator<Croissant> iterator = croissants.iterator();
-        while (iterator.hasNext()) {
-            Croissant c = iterator.next();
-            if (player.getBounds().intersects(c.getBounds()) && !c.isCollected()) {
-                player.collectCroissant(c);
-                c.collect();
-                iterator.remove();
+        Iterator<Croissant> croissantIterator = croissants.iterator();
+        while (croissantIterator.hasNext()) {
+            Croissant croissant = croissantIterator.next();
+            if (!croissant.isCollected() && 
+                player.getBounds().intersects(croissant.getBounds())) {
+                player.collectCroissant(croissant);
+                croissant.collect();
+                croissantIterator.remove();
             }
         }
 
-        // Handle enemies
-        Iterator<Enemy> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext()) {
-            Enemy e = enemyIterator.next();
-            if (!e.isDead()) {
-                e.updateWithPlayer(player);
- 
-
-                if (player.isAttacking() && player.getBounds().intersects(e.getBounds())) {
-                    e.takeDamage();
-                }
-
-                if (!player.isAttacking() && player.getBounds().intersects(e.getBounds())) {
-                    player.takeDamage();
-                }
-
-                e.tryAttack(player);
+        // Handle combat - simplified to avoid duplicate attacks
+        for (Enemy enemy : enemies) {
+            if (enemy.isDead()) continue;
+            
+            // Enemy attacks player when they collide (but not during player attack)
+            if (!player.isAttacking() && 
+                player.getBounds().intersects(enemy.getBounds())) {
+                enemy.tryAttack(player);
             }
         }
-
-        player.resetAttack(); // Reset attack state after processing
+        
+        // Update player
+        player.update();
     }
 
-    public void render(Graphics g) {
-        for (Obstacle o : obstacles) o.render(g);
-        for (Enemy e : enemies) e.render(g);
-        for (Croissant c : croissants) c.render(g);
+    public void render(Graphics g, int cameraX, int cameraY) {
+        // Render obstacles first (background)
+        for (Obstacle obstacle : obstacles) {
+            obstacle.render(g, cameraX, cameraY);
+        }
+        
+        // Render croissants
+        for (Croissant croissant : croissants) {
+            if (!croissant.isCollected()) {
+                croissant.render(g, cameraX, cameraY);
+            }
+        }
+        
+        // Render enemies last (foreground)
+        for (Enemy enemy : enemies) {
+            if (!enemy.isDead()) {
+                enemy.render(g, cameraX, cameraY);
+            }
+        }
     }
 
     public ArrayList<Enemy> getEnemies() {
         return enemies;
+    }
+
+    public ArrayList<Croissant> getCroissants() {
+        return croissants;
+    }
+
+    public ArrayList<Obstacle> getObstacles() {
+        return obstacles;
+    }
+    
+    // Method to check if all enemies are defeated (bonus win condition)
+    public boolean allEnemiesDefeated() {
+        for (Enemy enemy : enemies) {
+            if (!enemy.isDead()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    // Method to get remaining croissants count
+    public int getRemainingCroissants() {
+        int count = 0;
+        for (Croissant croissant : croissants) {
+            if (!croissant.isCollected()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int getWidth() {
+        return levelWidth;
+    }
+    public int getHeight(){
+        return height;
     }
 }

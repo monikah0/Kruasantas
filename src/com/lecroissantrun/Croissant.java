@@ -1,6 +1,10 @@
 package com.lecroissantrun;
 
 import java.awt.Graphics;
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+
 import java.awt.Color;
 
 /**
@@ -11,6 +15,10 @@ import java.awt.Color;
  * it awards points (and possibly an extra life), then “disappears.”
  */
 public class Croissant extends Entity {
+
+    private Image blueCroissantImage;
+    private Image pinkCroissantImage;
+    
     public enum Type{
         SCORE, EXTRA_LIFE
     }
@@ -21,6 +29,8 @@ public class Croissant extends Entity {
     public Croissant(int x, int y, int width, int height, Type type) {
         super(x, y, width, height);
         this.type = type;
+        this.blueCroissantImage = new ImageIcon("assets/blue_croissant.png").getImage();
+        this.pinkCroissantImage = new ImageIcon("assets/pink_croissant.png").getImage();
     }
     public Croissant(int x, int y, boolean isLifeBoost) {
         this(x, y, 24, 24, isLifeBoost ? Type.EXTRA_LIFE : Type.SCORE);
@@ -45,10 +55,10 @@ public class Croissant extends Entity {
         // Croissants don't move, so no update logic needed
     }
 
-    public void render(Graphics g) {
+    public void render(Graphics g, int cameraX, int cameraY) {
         if (!collected) {
-            g.setColor(type == Type.SCORE ? Color.BLUE : Color.PINK);
-            g.fillOval(x, y, width, height);
-        }
+            Image croissantImage = (type == Type.EXTRA_LIFE) ? pinkCroissantImage : blueCroissantImage;
+            g.drawImage(croissantImage, x - cameraX, y - cameraY, width, height, null);
+        } 
     }
 }
