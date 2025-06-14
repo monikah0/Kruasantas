@@ -53,7 +53,7 @@ public class Game {
     JButton aboutButton = new JButton("About");
     aboutButton.addActionListener(e -> {
         JOptionPane.showMessageDialog(frame,
-                "Collect croissants, defeat enemies,\nand reach the boulangerie!",
+                "Created by you!\nCollect croissants, defeat enemies,\nand reach the boulangerie!",
                 "About", JOptionPane.INFORMATION_MESSAGE);
     });
 
@@ -74,24 +74,10 @@ public class Game {
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-<<<<<<< HEAD
             showMainMenu();
         });
 
         
-=======
-            JFrame frame = new JFrame("Le Croissant Run");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 600);
-            frame.setResizable(false);
-            frame.setLocationRelativeTo(null); // Center the window
-
-            GamePanel panel = new GamePanel();
-            frame.add(panel);
-            frame.setVisible(true);
-            panel.requestFocusInWindow();
-        });
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
     }
 
     static class GamePanel extends JPanel implements Runnable {
@@ -108,7 +94,6 @@ public class Game {
         private int cameraY = 0;
         private int highScore = ScoreManager.loadHighScore();
 
-<<<<<<< HEAD
 
         private void updateCamera() {
             // Horizontal camera movement (X)
@@ -139,13 +124,10 @@ public class Game {
             }
         }
 
-=======
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         private Thread gameThread;
         private boolean running;
 
         public GamePanel() {
-<<<<<<< HEAD
 
             player = new Player(60, 430);
             level = new Level(currentLevel);
@@ -153,13 +135,6 @@ public class Game {
             setFocusable(true);
             setBackground(Color.BLACK);
             playMusic("assets/bgm.wav");
-=======
-            player = new Player(60, 430);
-            level = new Level();
-
-            setFocusable(true);
-            setBackground(Color.BLACK);
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
             
             addKeyListener(new KeyAdapter() {
                 @Override
@@ -178,12 +153,9 @@ public class Game {
                         case KeyEvent.VK_D:
                             keys[3] = true;
                             break;
-<<<<<<< HEAD
                         case KeyEvent.VK_SPACE:
                              player.jump(); // Jump on space key
                              break;
-=======
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
                     }
                 }
 
@@ -264,7 +236,6 @@ public class Game {
                 return;
             }
             
-<<<<<<< HEAD
             player.move(keys, level.getObstacles(), level.getWidth());
             level.update(player);
             
@@ -276,22 +247,11 @@ public class Game {
             }
 
             updateCamera();
-=======
-            player.move(keys);
-            level.update(player);
-            
-            // Check win condition
-            Rectangle goal = new Rectangle(700, 430, 60, 60);
-            if (player.getBounds().intersects(goal)) {
-                victory();
-            }
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         }
 
         private void gameOver() {
             running = false;
             SwingUtilities.invokeLater(() -> {
-<<<<<<< HEAD
                 int choice = JOptionPane.showOptionDialog(this,
                 "Game Over! Score: " + player.getScore() + "\nDo you want to restart from Level 1 or quit?",
                 "Game Over",
@@ -313,23 +273,11 @@ public class Game {
                 System.exit(0);
             }
 
-=======
-                int choice = JOptionPane.showConfirmDialog(this, 
-                    "Game Over! Score: " + player.getScore() + "\nPlay again?", 
-                    "Game Over", 
-                    JOptionPane.YES_NO_OPTION);
-                if (choice == JOptionPane.YES_OPTION) {
-                    restartGame();
-                } else {
-                    System.exit(0);
-                }
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
             });
         }
 
         private void victory() {
             running = false;
-<<<<<<< HEAD
 
             if (currentLevel >= 5) {
                 JOptionPane.showMessageDialog(this, "You completed all levels!\nFinal Score: " + player.getScore());
@@ -393,27 +341,6 @@ public class Game {
         }
 
 
-=======
-            SwingUtilities.invokeLater(() -> {
-                int choice = JOptionPane.showConfirmDialog(this, 
-                    "Victory! You reached the boulangerie!\nScore: " + player.getScore() + "\nPlay again?", 
-                    "Victory!", 
-                    JOptionPane.YES_NO_OPTION);
-                if (choice == JOptionPane.YES_OPTION) {
-                    restartGame();
-                } else {
-                    System.exit(0);
-                }
-            });
-        }
-
-        private void restartGame() {
-            player = new Player(60, 430);
-            level = new Level();
-            startGame();
-        }
-
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -422,27 +349,16 @@ public class Game {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             
-<<<<<<< HEAD
             //sky
             for (int x = 0; x < getWidth(); x += skyImage.getWidth(null)) {
                 g.drawImage(skyImage, x, 0, null);
 }
-=======
-            // Sky background
-            g.setColor(new Color(135, 206, 235));
-            g.fillRect(0, 0, getWidth(), getHeight());
-
-            // Grass
-            g.setColor(new Color(34, 139, 34));
-            g.fillRect(0, getHeight() - 100, getWidth(), 100);
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
 
             // grass
             for (int x = 0; x < getWidth(); x += grassImage.getWidth(null)) {
                  g.drawImage(grassImage, x, getHeight() - grassImage.getHeight(null), null);
 }
             // Starting area
-<<<<<<< HEAD
             int startX = 40;
             g.drawImage(startImage, startX - cameraX, 380 - cameraY, 80,  80, null);
             g.setColor(Color.BLACK);
@@ -461,34 +377,13 @@ public class Game {
             player.render(g, cameraX, cameraY);
 
 
-=======
-            g.setColor(new Color(173, 216, 230));
-            g.fillRect(40, 410, 40, 50);
-            g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, 12));
-            g.drawString("Start", 45, 405);
-
-            // Boulangerie goal
-            g.setColor(new Color(255, 204, 102));
-            g.fillRect(700, 430, 60, 50);
-            g.setColor(Color.BLACK);
-            g.drawString("Boulangerie", 705, 425);
-
-            // Render game objects
-            level.render(g);
-            player.render(g);
-
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
             // UI
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 16));
             g.drawString("Score: " + player.getScore(), 10, 25);
             g.drawString("Lives: " + player.getLives(), 10, 45);
             g.drawString("Health: " + player.getHealth() + "/" + player.getMaxHealth(), 10, 65);
-<<<<<<< HEAD
             g.drawString("Level:" + currentLevel,10 , 90);
-=======
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
             
             // Instructions
             g.setFont(new Font("Arial", Font.PLAIN, 12));

@@ -6,10 +6,7 @@ import javax.swing.ImageIcon;
 
 import java.awt.Color;
 import java.awt.Graphics;
-<<<<<<< HEAD
 import java.awt.Image;
-=======
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
 
 public class Enemy extends Entity {
     private int health = 3; // Reduced from 5 to make game more balanced
@@ -21,16 +18,10 @@ public class Enemy extends Entity {
     private boolean isChasing = false;
     private final int CHASE_RANGE = 100;
     private final int PATROL_RANGE = 50;
-<<<<<<< HEAD
     private Image enemyImage = new ImageIcon("assets/enemy.png").getImage();    
 
     public Enemy(int x, int y) {
         super(x, y, 50, 50);
-=======
-
-    public Enemy(int x, int y) {
-        super(x, y, 32, 32);
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         this.originalX = x;
         this.speed = 1; // Slower than player
     }
@@ -85,41 +76,17 @@ public class Enemy extends Entity {
         }
         
         // Keep enemy on ground
-<<<<<<< HEAD
         y = 415;
-=======
-        y = 430;
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         
         // Try to attack player if close enough
         tryAttack(player);
     }
 
     @Override
-<<<<<<< HEAD
     public void render(Graphics g, int cameraX, int cameraY) {
         if (dead) return;
         
         g.drawImage(enemyImage, x - cameraX, y - cameraY, width, height,null);
-=======
-    public void render(Graphics g) {
-        if (dead) return;
-        
-        // Enemy body
-        g.setColor(Color.RED);
-        g.fillRect(x, y, width, height);
-        
-        // Enemy outline
-        g.setColor(Color.DARK_GRAY);
-        g.drawRect(x, y, width, height);
-        
-        // Simple angry face
-        g.setColor(Color.BLACK);
-        g.fillRect(x + 6, y + 8, 6, 4);   // Left angry eye
-        g.fillRect(x + 20, y + 8, 6, 4);  // Right angry eye
-        g.fillRect(x + 12, y + 22, 8, 2); // Angry mouth
-        
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         // Health bar
         int healthBarWidth = 32;
         int healthBarHeight = 4;
@@ -127,46 +94,26 @@ public class Enemy extends Entity {
         
         // Health bar background
         g.setColor(Color.DARK_GRAY);
-<<<<<<< HEAD
         g.fillRect(x - cameraX, healthBarY - cameraY, healthBarWidth, healthBarHeight);
-=======
-        g.fillRect(x, healthBarY, healthBarWidth, healthBarHeight);
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         
         // Health bar foreground
         g.setColor(Color.GREEN);
         int currentHealthWidth = (int)(healthBarWidth * ((double)health / 3.0));
-<<<<<<< HEAD
         g.fillRect(x - cameraX, healthBarY - cameraY, currentHealthWidth, healthBarHeight);
         
         // Health bar border
         g.setColor(Color.BLACK);
         g.drawRect(x - cameraX, healthBarY - cameraY, healthBarWidth, healthBarHeight);
-=======
-        g.fillRect(x, healthBarY, currentHealthWidth, healthBarHeight);
-        
-        // Health bar border
-        g.setColor(Color.BLACK);
-        g.drawRect(x, healthBarY, healthBarWidth, healthBarHeight);
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
         
         // Direction indicator (small arrow)
         g.setColor(Color.YELLOW);
         if (direction == 1) {
             // Right arrow
-<<<<<<< HEAD
             g.fillPolygon(new int[]{x + width - 8 - cameraX, x + width - 2 - cameraX, x + width - 8 - cameraX}, 
                          new int[]{y + 2, y + 6, y + 10}, 3);
         } else {
             // Left arrow
             g.fillPolygon(new int[]{x + 8 - cameraX, x + 2 - cameraX, x + 8 - cameraX}, 
-=======
-            g.fillPolygon(new int[]{x + width - 8, x + width - 2, x + width - 8}, 
-                         new int[]{y + 2, y + 6, y + 10}, 3);
-        } else {
-            // Left arrow
-            g.fillPolygon(new int[]{x + 8, x + 2, x + 8}, 
->>>>>>> a1461594f8bc25d9c1aaa625640b272a6ca3b3bc
                          new int[]{y + 2, y + 6, y + 10}, 3);
         }
     }
