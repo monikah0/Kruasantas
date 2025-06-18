@@ -387,7 +387,7 @@ public class Game {
             
             // Instructions
             g.setFont(new Font("Arial", Font.PLAIN, 12));
-            g.drawString("Controls: A/D to move, W to attack", 10, getHeight() - 10);
+            g.drawString("Controls: A/D to move, W to attack, SPACE to jump", 10, getHeight() - 10);
             
             // Additional game stats
             g.drawString("Croissants: " + level.getRemainingCroissants(), 10, getHeight() - 30);
